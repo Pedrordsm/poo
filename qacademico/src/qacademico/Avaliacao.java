@@ -1,31 +1,27 @@
 package qacademico;
 
-public class Avaliacao {
+public abstract class Avaliacao {
     protected String nome;
     protected Data dtAplic;
     protected double valor;
 
-    public String getNome() {
-        return nome;
+    public Avaliacao(String n, Data d, double v) {
+        this.nome = n;
+        this.dtAplic = d;
+        this.valor = v;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public abstract double nota(String cpf);
+
+    public String getNome() {
+        return nome;
     }
 
     public Data getDtAplic() {
         return dtAplic;
     }
 
-    public void setDtAplic(Data dtAplic) {
-        this.dtAplic = dtAplic;
-    }
-
     public double getValor() {
         return valor;
-    }
-
-    public void setValor(double valor) {
-        this.valor = valor;
     }
 }

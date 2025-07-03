@@ -4,21 +4,24 @@ import java.util.ArrayList;
 
 public class Trabalho extends Avaliacao{
     private int nIntegrantes;
-    private ArrayList<GrupoTrabalho> grupo;
+    private ArrayList<GrupoTrabalho> grupos;
 
-    public int getnIntegrantes() {
-        return nIntegrantes;
+    public Trabalho(String nome, Data data, double valor, int ni, ArrayList<GrupoTrabalho> grupos) {
+        super(nome, data, valor);
+        this.nIntegrantes = ni;
+        this.grupos = grupos;
     }
 
-    public void setnIntegrantes(int nIntegrantes) {
-        this.nIntegrantes = nIntegrantes;
+    public double nota(String cpf) {
+        for (GrupoTrabalho g : grupos) {
+            if (g.alunoNoGrupo(cpf)) {
+                return g.getNota();
+            }
+        }
+        return 0;
     }
 
-    public ArrayList<GrupoTrabalho> getGrupo() {
-        return grupo;
-    }
+    public int getnIntegrantes() {return nIntegrantes;}
 
-    public void setGrupo(ArrayList<GrupoTrabalho> grupo) {
-        this.grupo = grupo;
-    }
+    public ArrayList<GrupoTrabalho> getGrupos() {return grupos;}
 }
