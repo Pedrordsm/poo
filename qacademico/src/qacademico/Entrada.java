@@ -328,14 +328,12 @@ public class Entrada {
 
             ArrayList<AlunoProva> alunosProvas = new ArrayList<>();
             for (Aluno aluno : alunosTurma) {
-                double[] notas = new double[nQuestoes];
-                for (int i = 0; i < nQuestoes; i++) {
-                    notas[i] = lerDouble("Nota de " + aluno.getNome() + " na questão " + (i+1) + ": ");
-                    if (notas[i] < 0) {
-                        throw new IllegalArgumentException("Nota não pode ser negativa!");
-                    }
+                AlunoProva alunoProva = lerAlunoProva(aluno, nQuestoes);
+                if (alunoProva != null) {
+                    alunosProvas.add(alunoProva);
+                } else {
+                    return null;
                 }
-                alunosProvas.add(new AlunoProva(aluno, notas));
             }
 
             return new Prova(nome, new Data(dia, mes, ano), valorMaximo, nQuestoes, alunosProvas);
@@ -396,7 +394,7 @@ public class Entrada {
         } catch (NumberFormatException e) {
             System.out.println("Erro: Digite um número inteiro válido!");
         }
-        return 0;
+        return -1;
     }
 
     /**
@@ -411,7 +409,7 @@ public class Entrada {
         } catch (NumberFormatException e) {
             System.out.println("Erro: Digite um número inteiro válido!");
         }
-        return 0;
+        return -1;
     }
 }
 
