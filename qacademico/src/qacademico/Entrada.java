@@ -151,9 +151,9 @@ public class Entrada {
                 int tipoAval = lerInteiro("Escolha o tipo de avaliação:\n1) Prova\n2) Trabalho\nOpção: ");
 
                 if (tipoAval == 1) {
-                    av.add(lerProva(s, alunosDisciplina));
+                    av.add(lerProva(s, alunosDisciplina, ano, semestre));
                 } else if (tipoAval == 2) {
-                    av.add(lerTrabalho(s, alunosDisciplina));
+                    av.add(lerTrabalho(s, alunosDisciplina, ano, semestre));
                 } else {
                     System.out.println("Opção inválida! Avaliação não adicionada.");
                     q--;
@@ -231,14 +231,31 @@ public class Entrada {
      * @param s: variável correspondente ao sistema.
      * @return A criação do trabalho e as suas demais informações.
      */
-    private Trabalho lerTrabalho(Sistema s, ArrayList<Aluno> alunosTurma) {
+     private Trabalho lerTrabalho(Sistema s, ArrayList<Aluno> alunosTurma, int anoTurma, int semestreTurma) {
         try {
             System.out.println("\nCadastro de Trabalho:");
             String nome = lerLinha("Informe o nome deste trabalho: ");
 
-            int dia = lerInteiro("Digite o dia do trabalho: ");
-            int mes = lerInteiro("Digite o mês do trabalho: ");
+            int dia = lerInteiro("Digite o dia do trabalho (1 a 31): ");
+            if (dia < 1 || dia > 31) {
+                throw new IllegalArgumentException("Dia deve estar entre 1 e 31!");
+            }
+
+            int mes = lerInteiro("Digite o mês do trabalho (1 a 12): ");
+            if (mes < 1 || mes > 12) {
+                throw new IllegalArgumentException("Mês deve estar entre 1 e 12!");
+            }
+
+            if (semestreTurma == 1 && mes > 6) {
+                throw new IllegalArgumentException("Para o primeiro semestre, o mês deve ser entre 1 e 6");
+            } else if (semestreTurma == 2 && mes < 7) {
+                throw new IllegalArgumentException("Para o segundo semestre, o mês deve ser entre 7 e 12");
+            }
+
             int ano = lerInteiro("Digite o ano do trabalho: ");
+            if (ano != anoTurma) {
+                throw new IllegalArgumentException("Ano do trabalho deve ser igual ao ano da turma (" + anoTurma + ")!");
+            }
 
             if (!Data.valida(dia, mes, ano)) {
                 throw new IllegalArgumentException("Data inválida!");
@@ -249,39 +266,24 @@ public class Entrada {
                 throw new IllegalArgumentException("Valor deve ser positivo!");
             }
 
-            int totalAlunos = alunosTurma.size();
             int nIntegrantes = lerInteiro("Digite o número máximo de integrantes: ");
             if (nIntegrantes <= 0) {
                 throw new IllegalArgumentException("Número de integrantes deve ser positivo!");
-            }
-            if (nIntegrantes > totalAlunos) {
-                throw new IllegalArgumentException("Número de integrantes deve ser no máximo " + alunosTurma.size() + " alunos");
             }
 
             int nGrupos = lerInteiro("Digite o número de grupos: ");
             if (nGrupos <= 0) {
                 throw new IllegalArgumentException("Número de grupos deve ser positivo!");
             }
-            if (nGrupos > totalAlunos) {
-                throw new IllegalArgumentException("O número de grupos (" + nGrupos + ") não pode ser maior que o número de alunos na turma (" + totalAlunos + ").");
-            }
 
-            int capacidadeMaxima = nGrupos * nIntegrantes;
-            if (totalAlunos > capacidadeMaxima) {
-                throw new IllegalArgumentException(
-                        "Configuração impossível! A turma tem " + totalAlunos + " alunos, mas com " + nGrupos + " grupos de no máximo " + nIntegrantes + " integrantes, só é possível alocar " + capacidadeMaxima + " alunos."
-                );
-            }
-            ArrayList<Aluno> alunosJaAlocados = new ArrayList<>();
             ArrayList<GrupoTrabalho> grupos = new ArrayList<>();
             for (int i = 0; i < nGrupos; i++) {
                 System.out.println("\nGrupo " + (i+1) + ":");
-                GrupoTrabalho grupo = lerGrupoTrabalho(s, alunosTurma, nIntegrantes,alunosJaAlocados);
+                GrupoTrabalho grupo = lerGrupoTrabalho(s, alunosTurma, nIntegrantes);
                 if (grupo == null) {
                     throw new IllegalArgumentException("Grupo inválido!");
                 }
                 grupos.add(grupo);
-                alunosJaAlocados.addAll(grupo.getAlunos());
             }
 
             return new Trabalho(nome, new Data(dia, mes, ano), valorMaximo, nIntegrantes, grupos);
@@ -351,14 +353,31 @@ public class Entrada {
      * @return Criação de uma prova e as suas demais informações
      */
 
-    private Prova lerProva(Sistema s, ArrayList<Aluno> alunosTurma) {
+     private Prova lerProva(Sistema s, ArrayList<Aluno> alunosTurma, int anoTurma, int semestreTurma) {
         try {
             System.out.println("\nCadastro de Prova:");
             String nome = lerLinha("Informe o nome desta prova: ");
 
-            int dia = lerInteiro("Digite o dia da prova: ");
-            int mes = lerInteiro("Digite o mês da prova: ");
+            int dia = lerInteiro("Digite o dia da prova (1 a 31): ");
+            if (dia < 1 || dia > 31) {
+                throw new IllegalArgumentException("Dia deve estar entre 1 e 31!");
+            }
+
+            int mes = lerInteiro("Digite o mês da prova (1 a 12): ");
+            if (mes < 1 || mes > 12) {
+                throw new IllegalArgumentException("Mês deve estar entre 1 e 12!");
+            }
+
+            if (semestreTurma == 1 && mes > 6) {
+                throw new IllegalArgumentException("Para o primeiro semestre, o mês deve ser entre 1 e 6");
+            } else if (semestreTurma == 2 && mes < 7) {
+                throw new IllegalArgumentException("Para o segundo semestre, o mês deve ser entre 7 e 12");
+            }
+
             int ano = lerInteiro("Digite o ano da prova: ");
+            if (ano != anoTurma) {
+                throw new IllegalArgumentException("Ano da prova deve ser igual ao ano da turma (" + anoTurma + ")!");
+            }
 
             if (!Data.valida(dia, mes, ano)) {
                 throw new IllegalArgumentException("Data inválida!");
