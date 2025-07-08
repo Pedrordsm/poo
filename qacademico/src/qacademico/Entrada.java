@@ -63,7 +63,8 @@ public class Entrada {
             String nome = lerLinha("Digite o nome do professor: ");
             String cpf = lerLinha("Digite o CPF do professor: ");
 
-            if (s.encontrarProf(cpf) != null) {
+
+            if (s.encontrarProf(cpf) != null || s.encontrarAlunocpf(cpf) != null) {
                 throw new IllegalArgumentException("Erro: CPF já cadastrado!");
             }
 
@@ -92,7 +93,7 @@ public class Entrada {
             String nome = lerLinha("Digite o nome do aluno: ");
             String cpf = lerLinha("Digite o CPF do aluno: ");
 
-            if (s.encontrarAlunocpf(cpf) != null) {
+            if (s.encontrarAlunocpf(cpf) != null || s.encontrarProf(cpf) != null) {
                 throw new IllegalArgumentException("Erro: CPF já cadastrado!");
             }
 
@@ -122,6 +123,9 @@ public class Entrada {
             int ano = lerInteiro("Digite o ano da disciplina: ");
             int semestre = lerInteiro("Digite o semestre da disciplina (1 ou 2): ");
 
+            if (ano < 0){
+                throw new IllegalArgumentException("Ano deve ser positivo.");
+            }
             if (semestre != 1 && semestre != 2) {
                 throw new IllegalArgumentException("Semestre deve ser 1 ou 2!");
             }
@@ -165,6 +169,17 @@ public class Entrada {
         }
     }
 
+    public boolean cpfJaCadastrado(String cpf,Sistema s) {
+        // Verifica se o CPF já pertence a um professor
+        if (s.encontrarProf(cpf) != null) {
+            return true;
+        }
+        // Verifica se o CPF já pertence a um aluno
+        if (s.encontrarAlunocpf(cpf) != null) {
+            return true;
+        }
+        return false;
+    }
     /**
      * Faz a leitura do CPF do professor:
      * @param s: variável correspondente ao sistema.
@@ -182,9 +197,16 @@ public class Entrada {
      */
     private ArrayList<Aluno> lerAlunos(Sistema s) {
         try {
+
             int quantAluno = lerInteiro("Digite a quantidade de alunos na disciplina: ");
             if (quantAluno <= 0) {
                 throw new IllegalArgumentException("Quantidade de alunos deve ser positiva!");
+            }
+            int totalAlunosNoSistema = s.getAlunos().size();
+            if (quantAluno > totalAlunosNoSistema) {
+                throw new IllegalArgumentException(
+                        "Erro: A quantidade de alunos solicitada (" + quantAluno + ") é maior que o total de alunos cadastrados no sistema (" + totalAlunosNoSistema + ")."
+                );
             }
             ArrayList<Aluno> alunosTurma = new ArrayList<>();
             for (int i = 0; i < quantAluno; i++) {

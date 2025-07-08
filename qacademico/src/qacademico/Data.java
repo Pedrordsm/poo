@@ -27,16 +27,6 @@ public class Data {
         return dia >= 1 && dia <= diasPorMes[mes - 1];
     }
 
-    // ISSO AQUI TA INÚTIIIIIIIIIIIL
-    public boolean posterior(Data d2) {
-        if (this.ano > d2.ano) return true;
-        if (this.ano == d2.ano) {
-            if (this.mes > d2.mes) return true;
-            if (this.mes == d2.mes && this.dia > d2.dia) return true;
-        }
-        return false;
-    }
-
     public int getDia() {
         return dia;
     }

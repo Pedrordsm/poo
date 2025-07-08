@@ -99,9 +99,7 @@ public class Sistema {
     public ArrayList<Professor> getProfs() {
         return profs;
     }
-    public ArrayList<Aluno> getAlunos() {
-        return alunos;
-    }
+    public ArrayList<Aluno> getAlunos() { return alunos;}
     public ArrayList<Turma> getTurmas() {
         return turmas;
     }
