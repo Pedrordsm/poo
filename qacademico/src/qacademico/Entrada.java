@@ -249,24 +249,39 @@ public class Entrada {
                 throw new IllegalArgumentException("Valor deve ser positivo!");
             }
 
+            int totalAlunos = alunosTurma.size();
             int nIntegrantes = lerInteiro("Digite o número máximo de integrantes: ");
             if (nIntegrantes <= 0) {
                 throw new IllegalArgumentException("Número de integrantes deve ser positivo!");
+            }
+            if (nIntegrantes > totalAlunos) {
+                throw new IllegalArgumentException("Número de integrantes deve ser no máximo " + alunosTurma.size() + " alunos");
             }
 
             int nGrupos = lerInteiro("Digite o número de grupos: ");
             if (nGrupos <= 0) {
                 throw new IllegalArgumentException("Número de grupos deve ser positivo!");
             }
+            if (nGrupos > totalAlunos) {
+                throw new IllegalArgumentException("O número de grupos (" + nGrupos + ") não pode ser maior que o número de alunos na turma (" + totalAlunos + ").");
+            }
 
+            int capacidadeMaxima = nGrupos * nIntegrantes;
+            if (totalAlunos > capacidadeMaxima) {
+                throw new IllegalArgumentException(
+                        "Configuração impossível! A turma tem " + totalAlunos + " alunos, mas com " + nGrupos + " grupos de no máximo " + nIntegrantes + " integrantes, só é possível alocar " + capacidadeMaxima + " alunos."
+                );
+            }
+            ArrayList<Aluno> alunosJaAlocados = new ArrayList<>();
             ArrayList<GrupoTrabalho> grupos = new ArrayList<>();
             for (int i = 0; i < nGrupos; i++) {
                 System.out.println("\nGrupo " + (i+1) + ":");
-                GrupoTrabalho grupo = lerGrupoTrabalho(s, alunosTurma, nIntegrantes);
+                GrupoTrabalho grupo = lerGrupoTrabalho(s, alunosTurma, nIntegrantes,alunosJaAlocados);
                 if (grupo == null) {
                     throw new IllegalArgumentException("Grupo inválido!");
                 }
                 grupos.add(grupo);
+                alunosJaAlocados.addAll(grupo.getAlunos());
             }
 
             return new Trabalho(nome, new Data(dia, mes, ano), valorMaximo, nIntegrantes, grupos);
@@ -283,11 +298,16 @@ public class Entrada {
      * @return Criação do grupo pertence ao respectivo trabalho.
      */
 
-    private GrupoTrabalho lerGrupoTrabalho(Sistema s, ArrayList<Aluno> alunosTurma, int maxIntegrantes) {
+    private GrupoTrabalho lerGrupoTrabalho(Sistema s, ArrayList<Aluno> alunosTurma, int maxIntegrantes, ArrayList<Aluno> alunosJaAlocados) {
         try {
+            int alunosDisponiveis = alunosTurma.size() - alunosJaAlocados.size();
             int numAlunos = lerInteiro("Digite o número de alunos neste grupo: ");
             if (numAlunos <= 0 || numAlunos > maxIntegrantes) {
                 throw new IllegalArgumentException("Número de alunos deve estar entre 1 e " + maxIntegrantes);
+            }
+
+            if (numAlunos > alunosDisponiveis) {
+                throw new IllegalArgumentException("Operação inválida. Você tentou adicionar " + numAlunos + " alunos, mas apenas " + alunosDisponiveis + " estão disponíveis.");
             }
 
             ArrayList<Aluno> alunosGrupo = new ArrayList<>();
@@ -297,6 +317,12 @@ public class Entrada {
 
                 if (aluno == null) {
                     throw new IllegalArgumentException("Aluno com matrícula " + mat + " não encontrado!");
+                }
+                if (alunosJaAlocados.contains(aluno)) {
+                    throw new IllegalArgumentException("O aluno " + aluno.getNome() + " (matrícula " + mat + ") já foi alocado em outro grupo.");
+                }
+                if (alunosGrupo.contains(aluno)) {
+                    throw new IllegalArgumentException("O aluno " + aluno.getNome() + " já foi adicionado a ESTE grupo.");
                 }
                 if (!alunosTurma.contains(aluno)) {
                     throw new IllegalArgumentException("Aluno não está matriculado nesta turma!");

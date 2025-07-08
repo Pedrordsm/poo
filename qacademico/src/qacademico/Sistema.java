@@ -61,7 +61,7 @@ public class Sistema {
 
     public void listarProfs() {
 
-        if (this.profs != null) {
+        if (this.profs.size() > 0) {
             System.out.println("Professores cadastrados:");
             for (Professor p : this.profs) {
                 System.out.println("* " + p);
